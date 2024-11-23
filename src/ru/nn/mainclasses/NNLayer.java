@@ -165,19 +165,27 @@ public class NNLayer {
     }
 
     public double activationFunction(double x) {
+        return 1.0 / (1.0 + Math.exp(-1 * x));
+        /*
         if (isLastLayer) {
             return A_CONSTANT_LINEAR_FUNCTION * x;
         } else {
-            return 1 / (1 + Math.exp(-1 * x));
+            return 1.0 / (1.0 + Math.exp(-1 * x));
         }
+
+         */
     }
 
     public double derivativeActivationFunction(double x) {
+        return x * (1 - x);
+        /*
         if (isLastLayer) {
             return A_CONSTANT_LINEAR_FUNCTION;
         } else {
             return x * (1 - x);
         }
+
+         */
     }
 
     public void calculateErrosVector(double[] rightAnswers) {

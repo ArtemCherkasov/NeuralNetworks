@@ -11,29 +11,49 @@ import java.util.Arrays;
 import java.util.List;
 
 public class DataHelper {
+    private final static String EURUSD60_csv = "EURUSD60.csv";
+    private final static String GBPUSD60_csv = "GBPUSD60.csv";
     private final static int INPUT_UNITS_SIZE = 48;
     private final static int OUTPUT_NEURAL_NETWORK_VECTOR_SIZE = 8;
-    private String filePath;
-    private List<String> lines;
+    private String filePathEurUsd;
+    private String filePathGbpUsd;
+    private List<String> linesEurUsd;
+    private List<String> linesGbpUsd;
     private List<DataUnit> dataUnitList;
     private int unitArraySize;
 
     public DataHelper(String filePath) {
-        this.filePath = filePath;
+        this.filePathEurUsd = filePath.concat(EURUSD60_csv);
+        this.filePathGbpUsd = filePath.concat(GBPUSD60_csv);
         this.dataUnitList = new ArrayList<DataUnit>();
     }
 
     public void loadData() {
         try {
             final Integer lineNumber = 0;
-            lines = Files.lines(Paths.get(filePath), StandardCharsets.UTF_8).toList();
-            String line;
-            for (int index = 0; index < lines.size(); index++) {
-                dataUnitList.add(new DataUnit(lines.get(index)));
+            linesEurUsd = Files.lines(Paths.get(filePathEurUsd), StandardCharsets.UTF_8).toList();
+            linesGbpUsd = Files.lines(Paths.get(filePathGbpUsd), StandardCharsets.UTF_8).toList();
+
+            for (int index = 0; index < linesEurUsd.size(); index++) {
+                String lineGbp = findSameRecord(linesGbpUsd, linesEurUsd.get(index));
+                if (lineGbp != null){
+                    dataUnitList.add(new DataUnit(linesEurUsd.get(index), lineGbp));
+                }
             }
         } catch (IOException exception) {
 
         }
+    }
+
+    private String findSameRecord(List<String> pricesList, String targetRecord){
+        String[] targetRecordParts = targetRecord.split(",");
+        for (int recordIndex = 0; recordIndex < pricesList.size(); recordIndex++){
+            String[] priceParts = pricesList.get(recordIndex).split(",");
+            if (priceParts[0].equals(targetRecordParts[0]) && priceParts[1].equals(targetRecordParts[1])){
+                return pricesList.get(recordIndex);
+            }
+        }
+        return null;
     }
 
     public List<DataUnit> getPriseList() {
@@ -55,13 +75,16 @@ public class DataHelper {
 
     public double[] getRightAnswer(int dataUnitIndex) {
         double[] out = new double[8];
-        double lastUnitClosePoint = this.dataUnitList.get(INPUT_UNITS_SIZE + dataUnitIndex - 1).close;
+        double lastUnitClosePoint = this.dataUnitList.get(INPUT_UNITS_SIZE + dataUnitIndex - 1).usdClose;
         int outputIndex = 0;
         for (int dataUnitListIndex = 0; dataUnitListIndex < OUTPUT_NEURAL_NETWORK_VECTOR_SIZE / 2; dataUnitListIndex++) {
-            out[outputIndex] = lastUnitClosePoint - this.dataUnitList.get(INPUT_UNITS_SIZE + dataUnitIndex).max;
+            out[outputIndex] = lastUnitClosePoint - this.dataUnitList.get(INPUT_UNITS_SIZE + dataUnitIndex).usdMax;
             outputIndex++;
-            out[outputIndex] = lastUnitClosePoint - this.dataUnitList.get(INPUT_UNITS_SIZE + dataUnitIndex).min;
+            out[outputIndex] = lastUnitClosePoint - this.dataUnitList.get(INPUT_UNITS_SIZE + dataUnitIndex).usdMin;
             outputIndex++;
+        }
+        for (int outputIndexPostProcess = 0; outputIndexPostProcess < OUTPUT_NEURAL_NETWORK_VECTOR_SIZE; outputIndexPostProcess++) {
+            out[outputIndexPostProcess] = valueConverterSigmaXToY(out[outputIndexPostProcess]);
         }
         return out;
     }
@@ -85,32 +108,44 @@ public class DataHelper {
     class DataUnit {
         DateTimeFormatter formatter;
         LocalDateTime dateTime;
-        private String[] lineText;
-        private double open;
-        private double max;
-        private double min;
-        private double close;
-        private double volume;
+        private String[] firstSourceLineText;
+        private String[] secondSourceLineText;
+        private double usdOpen;
+        private double usdMax;
+        private double usdMin;
+        private double usdClose;
+        private double usdVolume;
+        private double gbpOpen;
+        private double gbpMax;
+        private double gbpMin;
+        private double gbpClose;
+        private double gbpVolume;
         private double hour;
         private double dayOfWeek;
         private double dayOfMonth;
         private double month;
         private double[] unitArray;
 
-        public DataUnit(String lineText) {
-            this.lineText = lineText.split(",");
+        public DataUnit(String firstSource, String secondSource) {
+            this.firstSourceLineText = firstSource.split(",");
+            this.secondSourceLineText = secondSource.split(",");
             this.formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm");
-            this.dateTime = LocalDateTime.parse(this.lineText[0].concat(" ").concat(this.lineText[1]), this.formatter);
+            this.dateTime = LocalDateTime.parse(this.firstSourceLineText[0].concat(" ").concat(this.firstSourceLineText[1]), this.formatter);
             this.hour = this.dateTime.getHour();
             this.dayOfWeek = this.dateTime.getDayOfWeek().getValue();
             this.dayOfMonth = this.dateTime.getDayOfMonth();
             this.month = this.dateTime.getMonthValue();
-            this.open = Double.parseDouble(this.lineText[2]);
-            this.max = Double.parseDouble(this.lineText[3]);
-            this.min = Double.parseDouble(this.lineText[4]);
-            this.close = Double.parseDouble(this.lineText[5]);
-            this.volume = Double.parseDouble(this.lineText[6]);
-            this.unitArray = new double[]{this.open, this.max, this.min, this.close, this.volume, this.hour, this.dayOfWeek, this.dayOfMonth, this.month};
+            this.gbpOpen = Double.parseDouble(this.secondSourceLineText[2]);
+            this.gbpMax = Double.parseDouble(this.secondSourceLineText[3]);
+            this.gbpMin = Double.parseDouble(this.secondSourceLineText[4]);
+            this.gbpClose = Double.parseDouble(this.secondSourceLineText[5]);
+            this.gbpVolume = Double.parseDouble(this.secondSourceLineText[6]);
+            this.usdOpen = Double.parseDouble(this.firstSourceLineText[2]);
+            this.usdMax = Double.parseDouble(this.firstSourceLineText[3]);
+            this.usdMin = Double.parseDouble(this.firstSourceLineText[4]);
+            this.usdClose = Double.parseDouble(this.firstSourceLineText[5]);
+            this.usdVolume = Double.parseDouble(this.firstSourceLineText[6]);
+            this.unitArray = new double[]{this.gbpOpen, this.gbpMax, this.gbpMin, this.gbpClose, this.gbpVolume, this.usdOpen, this.usdMax, this.usdMin, this.usdClose, this.usdVolume, this.hour, this.dayOfWeek, this.dayOfMonth, this.month};
             unitArraySize = this.unitArray.length;
         }
 
@@ -121,5 +156,9 @@ public class DataHelper {
         public int getUnitSize() {
             return this.unitArray.length;
         }
+    }
+
+    public double valueConverterSigmaXToY(double x){
+        return 1.0 / (1.0 + Math.exp(-1 * x));
     }
 }

@@ -81,9 +81,13 @@ public class NeuralNetwork {
         double[] normalizedAnswer = new double[this.getLastLayer().getOutputVector().length];
         int pointerToIndex = this.inputAllUnitSize * this.singleUnitSize - 6;
         for (int indexOutputVector = 0; indexOutputVector < this.getLastLayer().getOutputVector().length; indexOutputVector++) {
-            normalizedAnswer[indexOutputVector] = this.nnLayersList.get(0).getNodesValueVector()[pointerToIndex] - this.getLastLayer().getOutputVector()[indexOutputVector];
+            normalizedAnswer[indexOutputVector] = this.nnLayersList.get(0).getNodesValueVector()[pointerToIndex] - valueConverterSigmaYToX(this.getLastLayer().getOutputVector()[indexOutputVector]);
         }
         return normalizedAnswer;
+    }
+
+    public double valueConverterSigmaYToX(double y) {
+        return Math.log(y / (1 - y));
     }
 
     public double getAverageQuadraticError() {

@@ -5,13 +5,14 @@ import ru.nn.mainclasses.NeuralNetwork;
 import java.util.Date;
 
 public class Main {
+    private final static String PATH_TO_DATA_DIR = "\\data\\";
     private final static int INPUT_SIZE = 10;
     private final static int OUTPUT_SIZE = 10;
     private final static int[] NN_LAYERS = {18, 36, 36, 18, 4};
 
     public static void main(String[] args) {
         // TODO Auto-generated method stub
-        String filePath = System.getProperty("user.dir").concat("\\data\\EURUSD60.csv");
+        String filePath = System.getProperty("user.dir").concat(PATH_TO_DATA_DIR);
         System.out.println(filePath);
         DataHelper dataHelper = new DataHelper(filePath);
         dataHelper.loadData();
@@ -29,8 +30,8 @@ public class Main {
         //neuralNetwork.getForwardPropagation().step();
         //System.out.println(OutputTextHelper.getStateText(neuralNetwork));
         //neuralNetwork.getBackPropagation().step();
-        for (int batchIndex = 0; batchIndex < 10; batchIndex++) {
-            for (int i = 0; i < 40000; i++) {
+        for (int batchIndex = 0; batchIndex < 3; batchIndex++) {
+            for (int i = 0; i < 10000; i++) {
                 //System.out.println("batch " + batchIndex + " " + dataHelper.getRightAnswerTextLine(i));
                 neuralNetwork.setInputVector(dataHelper.getDataUnitArrayByIndex(i));
                 neuralNetwork.setRightAnswer(dataHelper.getRightAnswer(i));
