@@ -19,23 +19,26 @@ public class Main {
 
         Date date = new Date();
         System.out.println("Neural networks start" + date);
-        int[] nnLayers = {0, 0, 0, 0};
+        int[] nnLayers = {0, 0, 0, 0, 0, 0, 0};
         nnLayers[0] = dataHelper.getDataUnitArrayByIndex(0).length;
         nnLayers[1] = dataHelper.getDataUnitArrayByIndex(0).length * 2;
-        nnLayers[2] = dataHelper.getRightAnswer(0).length;
+        nnLayers[2] = dataHelper.getDataUnitArrayByIndex(0).length * 2;
+        nnLayers[3] = dataHelper.getDataUnitArrayByIndex(0).length * 2;
+        nnLayers[4] = dataHelper.getDataUnitArrayByIndex(0).length * 2;
+        nnLayers[5] = dataHelper.getRightAnswer(0).length;
         nnLayers[nnLayers.length - 1] = dataHelper.getRightAnswer(0).length;
         NeuralNetwork neuralNetwork = new NeuralNetwork(nnLayers);
         neuralNetwork.setTechnicalParameters(dataHelper);
 
         if (!neuralNetwork.loadWeightMatrixes(dataHelper)) {
             for (int batchIndex = 0; batchIndex < 3; batchIndex++) {
-                for (int i = 0; i < 60000; i++) {
+                for (int row = 0; row < 60000; row++) {
                     //System.out.println("batch " + batchIndex + " " + dataHelper.getRightAnswerTextLine(i));
-                    neuralNetwork.setInputVector(dataHelper.getDataUnitArrayByIndex(i));
-                    neuralNetwork.setRightAnswer(dataHelper.getRightAnswer(i));
+                    neuralNetwork.setInputVector(dataHelper.getDataUnitArrayByIndex(row));
+                    neuralNetwork.setRightAnswer(dataHelper.getRightAnswer(row));
                     neuralNetwork.getForwardPropagation().step();
                     neuralNetwork.getBackPropagation().step();
-                    System.out.println("batch " + batchIndex + " " + neuralNetwork.getAverageQuadraticErrorTextLine());
+                    System.out.println("batch ".concat(String.valueOf(batchIndex)).concat(" ").concat("row ").concat(String.valueOf(row)).concat(" ").concat(neuralNetwork.getAverageQuadraticErrorTextLine()));
                 }
             }
             neuralNetwork.saveWeightMatrixes(dataHelper);

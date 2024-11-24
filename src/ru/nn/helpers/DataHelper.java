@@ -19,9 +19,11 @@ public class DataHelper {
     private final static String EURUSD60_csv = "EURUSD60.csv";
     private final static String GBPUSD60_csv = "GBPUSD60.csv";
     private final static String WEIGHT_MATRIX_FILE_NAME = "weight_matrix_";
+    private final static String NN_NAME = "nn_";
+    private final static String UNDERLINE_SYMBOL = "_";
     private final static int INPUT_UNITS_SIZE = 96;
-    private final static int OUTPUT_NEURAL_NETWORK_VECTOR_SIZE = 24;
-    private static final String EMPTY_STRING = "";
+    private final static int OUTPUT_NEURAL_NETWORK_VECTOR_SIZE = 48;
+    private final static String EMPTY_STRING = "";
     private String filePath;
     private String filePathEurUsd;
     private String filePathGbpUsd;
@@ -58,8 +60,9 @@ public class DataHelper {
     }
 
     public void saveWeightMatrixes(NeuralNetwork neuralNetwork) {
+        String nnParameterText = getNeuralNetworkParameterText(neuralNetwork);
         for (int layerIndex = 1; layerIndex < neuralNetwork.getLayersSize(); layerIndex++) {
-            Path path = Paths.get(this.filePath.concat(WEIGHT_MATRIX_FILE_NAME).concat(neuralNetwork.getNnLayersList().get(layerIndex).getLayerName()).concat(".txt"));
+            Path path = Paths.get(this.filePath.concat(WEIGHT_MATRIX_FILE_NAME).concat(nnParameterText).concat(neuralNetwork.getNnLayersList().get(layerIndex).getLayerName()).concat(".txt"));
             try {
                 Files.deleteIfExists(path);
                 Files.createFile(path);
@@ -105,6 +108,14 @@ public class DataHelper {
         }
 
         return true;
+    }
+
+    public String getNeuralNetworkParameterText(NeuralNetwork neuralNetwork) {
+        String result = NN_NAME;
+        for (int layerIndex = 0; layerIndex < neuralNetwork.getLayersSize(); layerIndex++) {
+            result = result.concat(String.valueOf(neuralNetwork.getNnLayersList().get(layerIndex).getNodesCount())).concat(UNDERLINE_SYMBOL);
+        }
+        return result;
     }
 
     private String findSameRecord(List<String> pricesList, String targetRecord) {

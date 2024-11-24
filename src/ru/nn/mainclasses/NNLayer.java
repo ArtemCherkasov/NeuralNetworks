@@ -9,7 +9,7 @@ public class NNLayer {
     private final static String DEFAULT_LAYER_NAME = "layer without name";
     private final static String LAYER_NAME = "layer ";
     private final static double ACTIVATE_FUNCTION_COEFFICIENT = 1.0;
-    private final static double LEARN_SPEED_COEFFICIENT = 0.005;
+    private final static double LEARN_SPEED_COEFFICIENT = 0.5;
     private final static double BIAS = 1.0;
     private final static boolean TEST_STATE = true;
 
