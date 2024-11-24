@@ -21,7 +21,7 @@ public class DataHelper {
     private final static String WEIGHT_MATRIX_FILE_NAME = "weight_matrix_";
     private final static String NN_NAME = "nn_";
     private final static String UNDERLINE_SYMBOL = "_";
-    private final static int INPUT_UNITS_SIZE = 96;
+    private final static int INPUT_UNITS_SIZE = 240;
     private final static int OUTPUT_NEURAL_NETWORK_VECTOR_SIZE = 48;
     private final static String EMPTY_STRING = "";
     private String filePath;

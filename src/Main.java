@@ -19,13 +19,14 @@ public class Main {
 
         Date date = new Date();
         System.out.println("Neural networks start" + date);
-        int[] nnLayers = {0, 0, 0, 0, 0, 0, 0};
+        int[] nnLayers = {0, 0, 0, 0, 0, 0, 0, 0};
         nnLayers[0] = dataHelper.getDataUnitArrayByIndex(0).length;
         nnLayers[1] = dataHelper.getDataUnitArrayByIndex(0).length * 2;
         nnLayers[2] = dataHelper.getDataUnitArrayByIndex(0).length * 2;
         nnLayers[3] = dataHelper.getDataUnitArrayByIndex(0).length * 2;
         nnLayers[4] = dataHelper.getDataUnitArrayByIndex(0).length * 2;
-        nnLayers[5] = dataHelper.getRightAnswer(0).length;
+        nnLayers[5] = dataHelper.getDataUnitArrayByIndex(0).length * 2;
+        nnLayers[6] = dataHelper.getRightAnswer(0).length;
         nnLayers[nnLayers.length - 1] = dataHelper.getRightAnswer(0).length;
         NeuralNetwork neuralNetwork = new NeuralNetwork(nnLayers);
         neuralNetwork.setTechnicalParameters(dataHelper);
