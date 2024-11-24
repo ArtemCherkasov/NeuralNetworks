@@ -140,9 +140,9 @@ public class DataHelper {
         double lastUnitClosePoint = this.dataUnitList.get(INPUT_UNITS_SIZE + dataUnitIndex - 1).usdClose;
         int outputIndex = 0;
         for (int dataUnitListIndex = 0; dataUnitListIndex < OUTPUT_NEURAL_NETWORK_VECTOR_SIZE / 2; dataUnitListIndex++) {
-            out[outputIndex] = lastUnitClosePoint - this.dataUnitList.get(INPUT_UNITS_SIZE + dataUnitIndex).usdMax;
+            out[outputIndex] = lastUnitClosePoint - this.dataUnitList.get(INPUT_UNITS_SIZE + dataUnitIndex + dataUnitListIndex).usdMax;
             outputIndex++;
-            out[outputIndex] = lastUnitClosePoint - this.dataUnitList.get(INPUT_UNITS_SIZE + dataUnitIndex).usdMin;
+            out[outputIndex] = lastUnitClosePoint - this.dataUnitList.get(INPUT_UNITS_SIZE + dataUnitIndex + dataUnitListIndex).usdMin;
             outputIndex++;
         }
         for (int outputIndexPostProcess = 0; outputIndexPostProcess < OUTPUT_NEURAL_NETWORK_VECTOR_SIZE; outputIndexPostProcess++) {
