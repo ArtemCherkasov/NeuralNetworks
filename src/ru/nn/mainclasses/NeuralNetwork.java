@@ -110,4 +110,12 @@ public class NeuralNetwork {
         this.inputAllUnitSize = dataHelper.getInputUnitsSize();
         this.singleUnitSize = dataHelper.getSingleUnitSize();
     }
+
+    public void saveWeightMatrixes(DataHelper dataHelper){
+        dataHelper.saveWeightMatrixes(this);
+    }
+
+    public boolean loadWeightMatrixes(DataHelper dataHelper){
+        return dataHelper.loadWeightMatrixes(this);
+    }
 }

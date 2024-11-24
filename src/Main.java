@@ -19,26 +19,28 @@ public class Main {
 
         Date date = new Date();
         System.out.println("Neural networks start" + date);
-        int[] nnLayers = {0, 90, 90, 36, 4};
+        int[] nnLayers = {0, 0, 0, 0};
         nnLayers[0] = dataHelper.getDataUnitArrayByIndex(0).length;
-        nnLayers[1] = dataHelper.getDataUnitArrayByIndex(0).length * 2;
-        nnLayers[2] = dataHelper.getDataUnitArrayByIndex(0).length;
+        nnLayers[1] = dataHelper.getDataUnitArrayByIndex(0).length;
+        nnLayers[2] = dataHelper.getRightAnswer(0).length;
         nnLayers[nnLayers.length - 1] = dataHelper.getRightAnswer(0).length;
         NeuralNetwork neuralNetwork = new NeuralNetwork(nnLayers);
         neuralNetwork.setTechnicalParameters(dataHelper);
 
-        //neuralNetwork.getForwardPropagation().step();
-        //System.out.println(OutputTextHelper.getStateText(neuralNetwork));
-        //neuralNetwork.getBackPropagation().step();
-        for (int batchIndex = 0; batchIndex < 3; batchIndex++) {
-            for (int i = 0; i < 10000; i++) {
-                //System.out.println("batch " + batchIndex + " " + dataHelper.getRightAnswerTextLine(i));
-                neuralNetwork.setInputVector(dataHelper.getDataUnitArrayByIndex(i));
-                neuralNetwork.setRightAnswer(dataHelper.getRightAnswer(i));
-                neuralNetwork.getForwardPropagation().step();
-                neuralNetwork.getBackPropagation().step();
-                System.out.println("batch " + batchIndex + " " + neuralNetwork.getAverageQuadraticErrorTextLine());
+        if (!neuralNetwork.loadWeightMatrixes(dataHelper)){
+            for (int batchIndex = 0; batchIndex < 3; batchIndex++) {
+                for (int i = 0; i < 60000; i++) {
+                    //System.out.println("batch " + batchIndex + " " + dataHelper.getRightAnswerTextLine(i));
+                    neuralNetwork.setInputVector(dataHelper.getDataUnitArrayByIndex(i));
+                    neuralNetwork.setRightAnswer(dataHelper.getRightAnswer(i));
+                    neuralNetwork.getForwardPropagation().step();
+                    neuralNetwork.getBackPropagation().step();
+                    System.out.println("batch " + batchIndex + " " + neuralNetwork.getAverageQuadraticErrorTextLine());
+                }
             }
+            neuralNetwork.saveWeightMatrixes(dataHelper);
+        } else {
+
         }
         //neuralNetwork.setRightAnswer(new double[]{0.0, 0.0, 0.0, 0.0});
         double[] vectorToInput = dataHelper.getDataUnitArrayByIndex(0);
