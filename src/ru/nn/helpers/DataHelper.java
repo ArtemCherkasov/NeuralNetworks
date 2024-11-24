@@ -21,7 +21,7 @@ public class DataHelper {
     private final static String WEIGHT_MATRIX_FILE_NAME = "weight_matrix_";
     private final static String NN_NAME = "nn_";
     private final static String UNDERLINE_SYMBOL = "_";
-    private final static int INPUT_UNITS_SIZE = 240;
+    private final static int INPUT_UNITS_SIZE = 480;
     private final static int OUTPUT_NEURAL_NETWORK_VECTOR_SIZE = 48;
     private final static String EMPTY_STRING = "";
     private String filePath;
@@ -86,8 +86,9 @@ public class DataHelper {
     }
 
     public boolean loadWeightMatrixes(NeuralNetwork neuralNetwork) {
+        String nnParameterText = getNeuralNetworkParameterText(neuralNetwork);
         for (int layerIndex = 1; layerIndex < neuralNetwork.getLayersSize(); layerIndex++) {
-            Path path = Paths.get(this.filePath.concat(WEIGHT_MATRIX_FILE_NAME).concat(neuralNetwork.getNnLayersList().get(layerIndex).getLayerName()).concat(".txt"));
+            Path path = Paths.get(this.filePath.concat(WEIGHT_MATRIX_FILE_NAME).concat(nnParameterText).concat(neuralNetwork.getNnLayersList().get(layerIndex).getLayerName()).concat(".txt"));
             if (!Files.exists(path)) {
                 return false;
             }
